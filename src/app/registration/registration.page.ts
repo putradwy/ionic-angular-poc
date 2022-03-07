@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthServices } from "../../services/auth-services";
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular'
+import { Utility } from "../../utils/utils"
 
 @Component({
   selector: 'app-registration',
@@ -13,15 +13,17 @@ export class RegistrationPage implements OnInit {
   constructor(
     public authService: AuthServices,
     public router: Router,
-    private alertController: AlertController
+    public util: Utility,
   ) { }
 
   ngOnInit() {}
 
   signUp(email, password) {
+    this.util.loading(true)
     this.authService.registerUser(email.value, password.value)      
-      .then(async (res) => {
-        const alert = await this.alertController.create({
+      .then((res) => {
+        this.util.loading(false)
+        this.util.alert({
           header: "Register Success",
           message: "Register Successful",
           buttons: [{
@@ -31,11 +33,15 @@ export class RegistrationPage implements OnInit {
             handler: () => {
               this.router.navigateByUrl('/', { replaceUrl: true });
             }
-          }],
+          }]
         })
-        alert.present();
       }).catch((error) => {
-        window.alert(error.message)
+        this.util.loading(false)
+        this.util.alert({
+          header: "Register Failed",
+          message: this.util.parseFbErrorCode(error.code),
+          buttons: ["OK"]
+        })
       })
   }
 }

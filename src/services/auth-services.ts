@@ -1,5 +1,4 @@
 import { Injectable, NgZone } from '@angular/core';
-// import { auth } from 'firebase/app';
 import { User } from './user'
 import { Router } from '@angular/router'
 import { AngularFireAuth } from '@angular/fire/compat/auth'
@@ -21,6 +20,7 @@ export class AuthServices {
                 this.userData = user;
                 localStorage.setItem('user', JSON.stringify(this.userData));
                 JSON.parse(localStorage.getItem('user'));
+                this.router.navigateByUrl('/homepage', { replaceUrl: true });
             } else {
                 localStorage.setItem('user', null);
                 JSON.parse(localStorage.getItem('user'));
@@ -30,9 +30,7 @@ export class AuthServices {
 
     //signIn with email & password
     signIn(email, password) {
-        const xxx = this.ngFireAuth.signInWithEmailAndPassword(email, password);
-        console.log("lslsls", xxx)
-        return xxx
+        return this.ngFireAuth.signInWithEmailAndPassword(email, password);
     }
 
     //register user with email & password
@@ -47,7 +45,7 @@ export class AuthServices {
     }
 
     // Store user in localStorage
-    SetUserData(user) {
+    setUserData(user) {
         const userRef: AngularFirestoreDocument<any> = this.afStore.doc(`users/${user.uid}`);
         const userData: User = {
           uid: user.uid,
@@ -62,10 +60,10 @@ export class AuthServices {
     }
 
     // Sign-out 
-    SignOut() {
+    signOut() {
         return this.ngFireAuth.signOut().then(() => {
-        localStorage.removeItem('user');
-        this.router.navigate(['login']);
+            localStorage.removeItem('user');
+            this.router.navigateByUrl('/', { replaceUrl: true });
         })
     }
 }
