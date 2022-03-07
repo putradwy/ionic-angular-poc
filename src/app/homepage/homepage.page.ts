@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { AuthServices } from "../../services/auth-services";
 
 @Component({
   selector: 'app-homepage',
@@ -9,14 +9,13 @@ import { Router } from '@angular/router';
 export class HomepagePage implements OnInit {
 
   constructor(
-    private router: Router,
+    public authService: AuthServices,
   ) { }
 
   ngOnInit() {
   }
 
   onLogout() {
-    this.router.navigateByUrl('/', { replaceUrl: true });
+    this.authService.signOut();
   }
-
 }
